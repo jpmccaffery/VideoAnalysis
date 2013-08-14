@@ -1,0 +1,1 @@
+Welcome to my first git project. This project is a qt GUI that loads video files and analyzes their time ordered activity data. It requires opnenCV and some video codecs. It works well with ffmpeg.
