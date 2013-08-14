@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="Line" name="line_2">
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="lineWidth">
+       <number>3</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="lineWidth">
+       <number>3</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <layout class="QVBoxLayout" name="layoutLeft">
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="layoutMiddle">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="layoutRight">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>15</height>
+       </size>
+      </property>
+      <property name="value">
+       <number>100</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>500</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Project</string>
+    </property>
+    <addaction name="actionNew_Project"/>
+    <addaction name="actionLoad_Project"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionExport_Project"/>
+    <addaction name="separator"/>
+    <addaction name="actionBatch_Test"/>
+   </widget>
+   <widget class="QMenu" name="menuVideo">
+    <property name="title">
+     <string>Video</string>
+    </property>
+    <addaction name="actionNewVideo"/>
+    <addaction name="actionVideoLoad"/>
+    <addaction name="actionSaveVideo"/>
+    <addaction name="actionSaveData_As"/>
+    <addaction name="actionFastSaveData"/>
+    <addaction name="actionFastSaveData_As"/>
+    <addaction name="actionSlowLoadData"/>
+   </widget>
+   <widget class="QMenu" name="menuModel">
+    <property name="title">
+     <string>Model</string>
+    </property>
+    <addaction name="actionNewModel"/>
+    <addaction name="actionModelLoad"/>
+    <addaction name="actionSaveModel"/>
+    <addaction name="actionSaveModel_As"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuVideo"/>
+   <addaction name="menuModel"/>
+  </widget>
+  <action name="actionNew_Project">
+   <property name="text">
+    <string>New Project</string>
+   </property>
+  </action>
+  <action name="actionLoad_Project">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionExport_Project">
+   <property name="text">
+    <string>Export Project</string>
+   </property>
+  </action>
+  <action name="actionVideoLoad">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionModelLoad">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionNewModel">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear Model</string>
+   </property>
+  </action>
+  <action name="actionSaveModel_As">
+   <property name="text">
+    <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionSaveData_As">
+   <property name="text">
+    <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionSaveVideo">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSaveModel">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionBatch_Test">
+   <property name="text">
+    <string>Batch Test</string>
+   </property>
+  </action>
+  <action name="actionNewVideo">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionFastSaveData">
+   <property name="text">
+    <string>Fast Save</string>
+   </property>
+  </action>
+  <action name="actionFastSaveData_As">
+   <property name="text">
+    <string>Fast Save As</string>
+   </property>
+  </action>
+  <action name="actionSlowLoadData">
+   <property name="text">
+    <string>Slow Load</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
