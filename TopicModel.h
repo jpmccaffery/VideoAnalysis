@@ -22,7 +22,7 @@ public:
 
     int K, M, B;
 	double Theta_MIN;
-	double ll;
+    pair < double, double > ll;
 	
     vector < vector < double > > Omega;
     vector < double > Omega0;
@@ -64,9 +64,9 @@ public:
     void setProbs(vector < vector < vector < bool > > > &Z);
     void updateProbs(int batch, int time, int topic, bool adding);
 
-    double log_likelihood(Z_Chain &chain, DataCollection &videos);
+    pair < double, double > log_likelihood(Z_Chain &chain, DataCollection &videos);
     vector < double > log_linear_likelihood(Z_Chain &chain, DataCollection &videos);
-    double getLL();
+    pair < double, double > getLL();
 
     double getAlpha(int b, int t, int position, bool flip_positive);
     double getBeta(int b, int t, int position, bool flip_positive, vector < vector < bool > > &Z_t);
@@ -132,7 +132,7 @@ signals:
     void saveTick(int);
     void loadTick(int);
     void changeK(int);
-    void changeLL(double);
+    void changeLL(pair < double, double >);
     void changeStatus(QString);
 
 };

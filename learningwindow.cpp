@@ -67,7 +67,7 @@ LearningWindow::LearningWindow(LearningModel *m, QWidget *parent) :
     connect(ui->momentumBox, SIGNAL(valueChanged(double)), model, SLOT(setMomentum(double)));
 
     connect(model, SIGNAL(setStatus(QString)), ui->statusLabel, SLOT(setText(QString)));
-    connect(model, SIGNAL(changeLL(double)), this, SLOT(setLL(double)));
+    connect(model, SIGNAL(changeLL(double, double)), this, SLOT(setLL(double, double)));
 
     // connect the buttons
     connect(ui->startButton, SIGNAL(clicked()), model, SLOT(start()));
@@ -131,7 +131,7 @@ void LearningWindow::initialize(){
 }
 
 // This updates the log likelihood list and replots
-void LearningWindow::setLL(double t){
+void LearningWindow::setLL(double causal_t, double visual_t){
 
     double *newY;
     int i;
@@ -150,19 +150,21 @@ void LearningWindow::setLL(double t){
     }
 
     x[iterations-1] = iterations;
-    y[iterations-1] = t;
+    y[iterations-1] = causal_t + visual_t;
 
 
     if(iterations == 2 && y[0] == 0.0){
 
-        y[0] = t;
+        y[0] = causal_t + visual_t;
     }
 
     plotCurve->setRawSamples(x, y, iterations);
     plot->replot();
     delete [] newY;
 
-    ui->logData->setText(QString::number(t));
+    ui->causalLabel->setText("Causal : " + QString::number(causal_t));
+    ui->visualLabel->setText("Visual : " + QString::number(visual_t));
+    ui->logData->setText(QString::number(causal_t + visual_t));
 
 }
 
@@ -178,8 +180,11 @@ double LearningWindow::getLL(){
 
 void LearningWindow::updateLL(){
 
+    pair < double, double > logs;
+
     model->E_Step();
-    setLL(model->log_likelihood());
+    logs = model->log_likelihood();
+    setLL(logs.first, logs.second);
     model->drawTopics();
 }
 

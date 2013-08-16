@@ -26,6 +26,8 @@ LearningModel::LearningModel(ProjectThread *p, MainWindow *q) :
     STEP = 2;
 
     activeFlag = false;
+    ll_current.first = 0;
+    ll_current.second = 0;
     ll_new = 0;
     ll_last = 0;
     change = 0;
@@ -50,7 +52,7 @@ LearningModel::~LearningModel(){
 //***********************************************
 
 
-double LearningModel::log_likelihood(){
+pair < double, double > LearningModel::log_likelihood(){
 
     return model.log_likelihood(sampler.chain, videos);
 }
@@ -109,9 +111,10 @@ void LearningModel::runLoop(int iterations){
         E_Step();
         M_Step();
 
-        ll_new = log_likelihood();
+        ll_current = log_likelihood();
+        ll_new = ll_current.first + ll_current.second;
 
-        emit changeLL(ll_new);
+        emit changeLL(ll_current.first, ll_current.second);
 
         change = ll_new - ll_last;
 

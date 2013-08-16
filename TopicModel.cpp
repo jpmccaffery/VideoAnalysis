@@ -27,7 +27,8 @@ TopicModel::TopicModel(ProjectThread *p, MainWindow *q) :
     B = 0;
 
 	Sigma0 = 0.0;
-	ll = 0.0;
+    ll.first = 0.0;
+    ll.second = 0.0;
 	Theta_MIN = 0.0;
 }
 
@@ -44,7 +45,8 @@ TopicModel::TopicModel(int topics, int features) :
     B = 0;
 
     Theta_MIN = (1.0 / ( ((double) M) * ((double) M) * ((double) M) ) );
-    ll = -1000000.0;
+    ll.first = -1000000.0;
+    ll.second = -1000000.0;
 
     Omega0.resize(K);
     Omega.resize(K);
@@ -98,7 +100,8 @@ void TopicModel::initialize(int topics, int features, vector<int> &localTimes){
         B = localTimes.size();
 
         Theta_MIN = (1.0 / ( ((double) M) * ((double) M) * ((double) M) ) );
-        ll = -1000000.0;
+        ll.first = -1000000.0;
+        ll.second = -1000000.0;
 
         T.resize(B);
         for(int i=0; i < B; i++){
@@ -294,7 +297,7 @@ void TopicModel::saveData(QString qname){
     datamanager->saveInt(qname, "K", "K", K);
     datamanager->saveInt(qname, "M", "M", M);
     datamanager->saveDouble(qname, "Theta_MIN", "Theta_MIN", Theta_MIN);
-    datamanager->saveDouble(qname, "Log_Likelihood", "likelihood", ll);;
+    datamanager->saveDouble(qname, "Log_Likelihood", "likelihood", (ll.first + ll.second));;
 
     cout << "Saving Omega values...\n";
     /*************************************/
@@ -496,7 +499,10 @@ void TopicModel::loadData(QString qname){
     K = datamanager->loadDouble(qname, "K");
     M = datamanager->loadDouble(qname, "M");
     Theta_MIN = datamanager->loadDouble(qname, "Theta_MIN");
-    ll = datamanager->loadDouble(qname, "Log_Likelihood");;
+
+    ll.first = 0;
+    ll.second = 0;
+//    ll = datamanager->loadDouble(qname, "Log_Likelihood");;
 
 	/****************************************/
 	// Allocate memory
@@ -1072,15 +1078,17 @@ void TopicModel::updateProbs(int batch, int time, int topic, bool adding){
 //************************************************
 // Likelihood Functions
 //************************************************
-double TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
+pair < double, double > TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
 
     int i, j, k;
     int k0, b0, t0;
     int t;
     int a, b;
     int count;
-    double total;
-    double likelihood = 0.0;
+    double causal_total;
+    double visual_total;
+    double causal_likelihood = 0.0;
+    double visual_likelihood = 0.0;
     vector < vector < vector < bool > > > Z;
 
 
@@ -1108,7 +1116,8 @@ double TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
 
     for(i=chain.indexStart; i< (chain.hillSamples + chain.indexStart); i++){
 
-        total = 0.0;
+        causal_total = 0.0;
+        visual_total = 0.0;
 
         b0 = chain.b_sample[i];
         t0 = chain.t_sample[i];
@@ -1134,9 +1143,9 @@ double TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
             for(k=0; k < K; k++){
 
                 if(Z[b][0][k]){
-                    total = total + log( P0[k] );
+                    causal_total = causal_total + log( P0[k] );
                 }else{
-                    total = total + log( 1.0 - P0[k] );
+                    causal_total = causal_total + log( 1.0 - P0[k] );
                 }
             }
 
@@ -1146,9 +1155,9 @@ double TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
                 for(k=0; k < K; k++){
 
                     if(Z[b][t][k]){
-                        total = total + log( Aleph[b][k][t] );
+                        causal_total = causal_total + log( Aleph[b][k][t] );
                     }else{
-                        total = total + log( 1.0 - Aleph[b][k][t] );
+                        causal_total = causal_total + log( 1.0 - Aleph[b][k][t] );
                     }
                 }
                 // Do the Tau terms
@@ -1156,20 +1165,21 @@ double TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
 
                     if(videos.getData(b)->X[t][j] > 0){
 
-                        total = total + videos.getData(b)->X[t][j] * log( Tau[b][j][t] );
+                        visual_total = visual_total + videos.getData(b)->X[t][j] * log( Tau[b][j][t] );
                     }
                 }
 
                 if(videos.getData(b)->N[t] > 0){
 
-                    total = total - videos.getData(b)->N[t] * log( Nu[b][t] );
+                    visual_total = visual_total - videos.getData(b)->N[t] * log( Nu[b][t] );
                 }
 
             }
 
-            likelihood = likelihood + chain.probs[i] * total;
+            causal_likelihood = causal_likelihood + chain.probs[i] * causal_total;
+            visual_likelihood = visual_likelihood + chain.probs[i] * visual_total;
 
-            if(isnan(likelihood)){
+            if(isnan(causal_likelihood) || isnan(visual_likelihood)){
                 cout << "Is Nan\n";
                 cin >> a;
             }
@@ -1177,8 +1187,9 @@ double TopicModel::log_likelihood(Z_Chain &chain, DataCollection &videos){
 
     }
 
-    ll = likelihood;
-    return likelihood;
+    ll.first = causal_likelihood;
+    ll.second = visual_likelihood;
+    return ll;
 }
 
 
@@ -1300,11 +1311,11 @@ vector < double > TopicModel::log_linear_likelihood(Z_Chain &chain, DataCollecti
 
     }
 
-    ll = likelihood;
+//    ll = likelihood;
     return likelihoods;
 }
 
-double TopicModel::getLL(){
+pair < double, double > TopicModel::getLL(){
 
     return ll;
 }

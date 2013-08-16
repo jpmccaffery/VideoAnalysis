@@ -64,7 +64,7 @@ public:
     LearningModel(ProjectThread *p=0, MainWindow *q=0);
 	~LearningModel();
 
-    double log_likelihood();
+    pair < double, double > log_likelihood();
     vector < double > log_linear_likelihood();
 	void init_default();
     void drawTopic(int k);
@@ -128,7 +128,7 @@ signals:
     void loadTick(int);
     void setStatus(QString);
 
-    void changeLL(double);
+    void changeLL(double, double);
 
     void changeM(int);
     void changeT(int);
@@ -145,6 +145,7 @@ private:
 
     // These are the thread variables
     bool activeFlag;
+    pair < double, double > ll_current;
     double ll_new;
     double ll_last;
     double change;

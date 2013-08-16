@@ -73,7 +73,7 @@ signals:
 
 public slots:
 
-    void setLL(double t);
+    void setLL(double causal_t, double visual_t);
     void setFile(QString s);
     void loadModel();
     void saveModel();
