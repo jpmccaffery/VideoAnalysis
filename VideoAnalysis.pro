@@ -57,7 +57,8 @@ HEADERS  += mainwindow.h \
     projectwidget.h \
     projectthread.h \
     datacollection.h \
-    primaryfeature.h
+    primaryfeature.h \
+    GlobalConsts.h
 
 FORMS    += mainwindow.ui \
     videowidget.ui \

@@ -327,4 +327,6 @@ void Sampler::sample(TopicModel &model, DataCollection &videos){
 	// Now the normalize function also converts from log to absolute likelihoods
 
     chain.normalize();
+
+    int a = 0;
 }

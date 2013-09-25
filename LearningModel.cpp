@@ -203,6 +203,13 @@ void LearningModel::E_Step(){
     }
 
     sampler.sample(model, videos);
+
+    vector < vector < bool > > bestChain;
+
+    sampler.chain.getBest(0, bestChain);
+    videos.getData(0)->generateCountVideo("withZChain.avi", bestChain);
+
+
 }
 
 

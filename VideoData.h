@@ -47,6 +47,7 @@ public:
     vector < double > N;
     QString fname, ftype;
 
+    // Lets just call T the number of timesteps in the model including time = 0
     int M, T, totalFrames;
     int binSize;
     int blockWidth, blockHeight;
@@ -91,7 +92,7 @@ public:
 
     // Image Generators
     IplImage* drawTopic(vector < double > &weights, QString s, bool wantReturnImage);
-    void drawKeyWeighted(int feature, IplImage *image, int bwidth, int bheight, double weight);
+    void drawKeyWeighted(int feature, IplImage *image, int bwidth, int bheight, double weight, double scale = 1.0);
 
     // Save / Load Functions
     int getSaveTotal();

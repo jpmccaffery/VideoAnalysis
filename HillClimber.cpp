@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "QDebug"
 #include "datacollection.h"
+#include "GlobalConsts.h"
 
 using namespace std;
 
@@ -1817,6 +1818,7 @@ double HillClimber::base_omega(vector < vector < bool > > &Z, int a, int b, int 
 
 //	cout << "outside gradient " << gradient_omega << "\n";
 
+//    return causalWeight * base;
     return base;
 }
 
@@ -1847,7 +1849,8 @@ double HillClimber::base_omega0(vector < vector < bool > > &Z, int a, int batch)
 
     }
 
-	return base;
+//    return causalWeight * base;
+    return base;
 }
 
 double HillClimber::base_theta(vector < vector < bool > > &Z, int a, int b, int batch){
@@ -1875,7 +1878,8 @@ double HillClimber::base_theta(vector < vector < bool > > &Z, int a, int b, int 
 		}
 	}
 
-	return base;
+//    return visualWeight * base;
+    return base;
 }
 
 
@@ -1909,7 +1913,8 @@ double HillClimber::base_theta0(int b, int batch){
 		}
 	}
 
-	return base;
+//    return visualWeight * base;
+    return base;
 }
 
 
@@ -1946,7 +1951,8 @@ double HillClimber::base_sigma(vector < vector < bool > > &Z, int a, int batch){
 //	cout << "\n";
 
 
-	return base;
+//    return causalWeight * base;
+    return base;
 }
 
 
@@ -1977,7 +1983,8 @@ double HillClimber::base_sigma0(int batch){
 //	cout << "\n";
 
 
-	return base;
+//    return causalWeight * base;
+    return base;
 }
 
 // Just make sure you pass the right Z vector
@@ -2122,7 +2129,8 @@ double HillClimber::delta_omega(vector < vector < bool > > &Z, vector < int > &s
 
 	}
 
-	return (inferior+superior);
+//    return causalWeight * (inferior+superior);
+    return (inferior+superior);
 
 }
 
@@ -2215,7 +2223,8 @@ double HillClimber::delta_omega0(vector < vector < bool > > &Z, vector < int > &
 
 	}
 
-	return (inferior+superior);
+//    return causalWeight * (inferior+superior);
+    return (inferior+superior);
 
 }
 
@@ -2288,7 +2297,8 @@ double HillClimber::delta_theta(vector < vector < bool > > &Z, vector < int > &s
 		}
 
 	}
-	return delta_theta;
+//    return visualWeight * delta_theta;
+    return delta_theta;
 
 }
 
@@ -2326,7 +2336,8 @@ double HillClimber::delta_theta0(vector < vector < bool > > &Z, vector < int > &
 		}
 
 	}
-	return delta_theta;
+//    return visualWeight * delta_theta;
+    return delta_theta;
 
 }
 
@@ -2422,7 +2433,8 @@ double HillClimber::delta_sigma(vector < vector < bool > > &Z, vector < int > &s
 		}
 	}
 
-	return delta_sigma;
+//    return causalWeight * delta_sigma;
+    return delta_sigma;
 
 }
 
@@ -2469,7 +2481,8 @@ double HillClimber::delta_sigma0(vector < vector < bool > > &Z, vector < int > &
 
 	}
 
-	return delta_sigma;
+//    return causalWeight * delta_sigma;
+    return delta_sigma;
 
 }
 

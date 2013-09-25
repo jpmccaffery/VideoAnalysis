@@ -891,7 +891,7 @@ void VideoData::generateFeatureVideo4(){
     generateFeatureVideo(FEATURE4);
 }
 
-// This generates and saves a video of the features in the video
+// This generates and saves a video of the frame by frame features in the video
 void VideoData::generateFeatureVideo(int featureType){
 
     int i, j;
@@ -998,12 +998,21 @@ void VideoData::generateFeatureVideo(int featureType){
 // on the feature counts. The original video is not directly used
 
 // This method can optionally take a ZChain and draw on which topics are present or absent
+// This method should rescale the resolution so that text can be written on nicely and uniformly
 void VideoData::generateCountVideo(QString saveName, vector < vector < bool > > chain){
 
     int i, j;
     int t;
     double average = 0;
     double max = 0.0;
+
+    int slowFactor = 5;
+
+    double newHeight;
+    double aspectRatio;
+    double newWidth = 1000;
+    double scale;
+    CvSize newSize;
 
     CvPoint pt1;
     CvPoint pt2;
@@ -1019,22 +1028,29 @@ void VideoData::generateCountVideo(QString saveName, vector < vector < bool > > 
     text = new char[100];
     CvFont *font;
     font = new CvFont();
-    cvInitFont(font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5);
+    cvInitFont(font, CV_FONT_HERSHEY_SIMPLEX, 1.5, 1.5, 0, 3);
 
     size.width = width;
     size.height = height;
 
-    frame = cvCreateImage(size, IPL_DEPTH_64F, 3);
-    color = cvCreateImage(size, IPL_DEPTH_8U, 3);
+    aspectRatio = ((double) height) / ((double) width);
+    newHeight = newWidth * aspectRatio;
+    newSize.height = newHeight;
+    newSize.width = newWidth;
+    scale = newHeight / ((double) height);
+
+
+    frame = cvCreateImage(newSize, IPL_DEPTH_64F, 3);
+    color = cvCreateImage(newSize, IPL_DEPTH_8U, 3);
 
     pt1.x = 0;
     pt1.y = 0;
-    pt2.x = size.width;
-    pt2.y = size.height;
+    pt2.x = newSize.width;
+    pt2.y = newSize.height;
     cvRectangle(frame, pt1, pt2, CV_RGB(0,0,0), CV_FILLED);
     cvRectangle(color, pt1, pt2, CV_RGB(0,0,0), CV_FILLED);
 
-    for(t=1; t < (T+1); t++){
+    for(t=1; t < T; t++){
         for(j=0; j < M; j++){
 
             average = average + X[t][j];
@@ -1044,27 +1060,29 @@ void VideoData::generateCountVideo(QString saveName, vector < vector < bool > > 
         }
     }
 
-    average = average / ((double) (T*M));
+    average = average / ((double) ((T-1)*M));
 
-    videoWriter = cvCreateVideoWriter(saveName.toStdString().c_str(), CV_FOURCC('X','V','I','D'), 25, size);
+    videoWriter = cvCreateVideoWriter(saveName.toStdString().c_str(), CV_FOURCC('X','V','I','D'), 25, newSize);
 
-    for(t=1; t < (T+1); t++){
+    for(t=1; t < T; t++){
 
         for(j=0; j < M; j++){
 
-            drawKeyWeighted(j, frame, blockWidth, blockHeight, ((double) X[t][j]) / max);
+            drawKeyWeighted(j, frame, blockWidth, blockHeight, ((double) X[t][j]) / max, scale);
         }
+        cvSaveImage("countTest.png", frame);
         cvConvertScale(frame, color, 1.0, 0.0);
+        cvSaveImage("countTestColor.png", color);
 
         // Add the text for each topic
         if(t < T){
             for(int k= 0; k < chain[t].size(); k++){
                 sstream.str("");
                 strcpy(text, "");
-                sstream << "cat " << (k+1) << ". " << chain[t][k];
+                sstream << "K" << (k+1) << ". " << chain[t][k];
                 strcat(text, sstream.str().c_str());
                 pt1.x = 0;
-                pt1.y = 20 + 25 *k;
+                pt1.y = 80 + 75 *k;
                 cvPutText(color, text, pt1, font, CV_RGB(255,0,0));
 
                 if(k > 10){
@@ -1073,10 +1091,13 @@ void VideoData::generateCountVideo(QString saveName, vector < vector < bool > > 
             }
         }
 
+        cvSaveImage("countTestColorAfter.png", color);
+
+
         pt1.x = 0;
         pt1.y = 0;
 
-        for(i=0; i < binSize; i++){
+        for(i=0; i < slowFactor * binSize; i++){
 
             if(!cvWriteFrame(videoWriter, color)){
                 cout << "Failed to write frame\n";
@@ -1691,7 +1712,7 @@ IplImage* VideoData::drawTopic(vector < double > &weights, QString s, bool wantR
 // Lets switch to BGR in this method
 // Also, we're just going to take an IPL_DEPTH_64F image so that we can keep a running total in one image
 // We were having memory problems and filling a lot of time.
-void VideoData::drawKeyWeighted(int feature, IplImage *image, int bwidth, int bheight, double weight){
+void VideoData::drawKeyWeighted(int feature, IplImage *image, int bwidth, int bheight, double weight, double scale){
 
     int x, y;
     int i, j;
@@ -1700,13 +1721,16 @@ void VideoData::drawKeyWeighted(int feature, IplImage *image, int bwidth, int bh
     x = features[feature]->x;
     y = features[feature]->y;
 
-
+    bwidth = scale * bwidth;
+    bheight = scale * bheight;
+    x = x * scale;
+    y = y * scale;
 
     for(i=0; i < bheight; i++){
-        if((y + i) >= height){break;}
+        if((y + i) >= scale * height){break;}
         rowptr = (((double*) image->imageData) + (y + i) * (image->widthStep) / 8) + x * 3;
         for(j=0; j < bwidth; j++){
-            if((x + j) >= width){break;}
+            if((x + j) >= scale * width){break;}
             rowptr[j * 3 + 0] = rowptr[j * 3 + 0] + weight * features[feature]->blue;
             rowptr[j * 3 + 1] = rowptr[j * 3 + 1] + weight * features[feature]->green;
             rowptr[j * 3 + 2] = rowptr[j * 3 + 2] + weight * features[feature]->red;

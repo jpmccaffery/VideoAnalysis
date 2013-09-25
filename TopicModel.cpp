@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "datacollection.h"
 #include <fstream>
+#include "GlobalConsts.h"
 
 using namespace std;
 
@@ -765,7 +766,7 @@ double TopicModel::getAlpha(int b, int t, int position, bool flip_positive){
 	}
 
 
-	return log(alpha);
+    return causalWeight * log(alpha);
 
 }
 
@@ -818,7 +819,7 @@ double TopicModel::getBeta(int b, int t, int position, bool flip_positive, vecto
 		cin >> beta;
 	}
 
-	return logbeta;
+    return causalWeight * logbeta;
 }
 
 // I think this does something like return the log of the gamma term and all the sampling is
@@ -929,7 +930,7 @@ double TopicModel::getGamma(int b, int t, int position, bool flip_positive, Vide
 		cin >> gamma;
 	}
 
-	return gamma;
+    return visualWeight * gamma;
 
 }
 
@@ -1187,8 +1188,8 @@ pair < double, double > TopicModel::log_likelihood(Z_Chain &chain, DataCollectio
 
     }
 
-    ll.first = causal_likelihood;
-    ll.second = visual_likelihood;
+    ll.first = causalWeight * causal_likelihood;
+    ll.second = visualWeight * visual_likelihood;
     return ll;
 }
 
